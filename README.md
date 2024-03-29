@@ -48,7 +48,7 @@ It also uses following auxiliary modules:
     <u>strarr</u> (to learn more about it, see the module README.md)
   </li>
   <li>
-    <u>strarr_counter</u> (to learn more about it, see the module README.md)
+    <u>strarr_iter</u> (to learn more about it, see the module README.md)
   </li>
   <li>
     <u>shelltree</u> (to learn more about it, see the module README.md)

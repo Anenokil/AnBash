@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "strarr.h"
-#include "strarr_counter.h"
+#include "strarr_iter.h"
 #include "shelltree.h"
 
 enum
@@ -51,11 +51,11 @@ void _repl_var(char **pstr, strarr vars);
 void _repl_escape(char **pstr, const char *seq);
 
 /* The function returns a fragment ['begin', 'end') of 'arr' */
-char * _cut(strarr arr, const scnt begin, const scnt end);
+char * _cut(strarr arr, const sait begin, const sait end);
 
 /* The function adds a fragment ['begin', 'end') of 'src' to '*dst';
  * if to_repl_esc set on 1, then replaces escape sequences */
-void _strarr_addn(strarr *dst, strarr src, const scnt begin, const scnt end, int to_repl_esc, const char *seq);
+void _strarr_addn(strarr *dst, strarr src, const sait begin, const sait end, int to_repl_esc, const char *seq);
 
 /* The function returns a category of a string for _check_syntax function */
 int _ctg(const char *str);
@@ -175,7 +175,7 @@ _repl_escape(char **pstr, const char *seq)
 }
 
 char *
-_cut(strarr arr, const scnt begin, const scnt end)
+_cut(strarr arr, const sait begin, const sait end)
 {
     /* Calculates result size */
     register int size = 0;
@@ -209,7 +209,7 @@ _cut(strarr arr, const scnt begin, const scnt end)
 }
 
 void
-_strarr_addn(strarr *dst, strarr src, const scnt begin, const scnt end, int to_repl_esc, const char *seq)
+_strarr_addn(strarr *dst, strarr src, const sait begin, const sait end, int to_repl_esc, const char *seq)
 {
     /* Gets string */
     char *tmp = _cut(src, begin, end);
@@ -232,13 +232,13 @@ parse(strarr inarr)
 
     const int arr_size = strarr_len(inarr);
     char quot = 0; /* Flag of quot marks: possible values: \0 or \" or \' */
-    const scnt end = { arr_size, 0 };
-    scnt begin = { 0, 0 };
-    scnt i = { 0, 0 };
-    scnt tmp = { 0, 0 };
+    const sait end = { arr_size, 0 };
+    sait begin = { 0, 0 };
+    sait i = { 0, 0 };
+    sait tmp = { 0, 0 };
     /* Iterates by characters */
-    while (scnt_cmp(i, end)) {
-        char c = scnt_ccur(inarr, i); /* Current character */
+    while (sait_cmp(i, end)) {
+        char c = sait_ccur(inarr, i); /* Current character */
         if (quot) { /* If inside quots */
             if (c == quot) {
                 /* Adds the current word to array */
@@ -247,84 +247,84 @@ parse(strarr inarr)
                 /* Sets quot flag on 0 */
                 quot = 0;
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
             } else if (c == SLASH) {
                 /* Moves to the next-next character */
-                if (scnt_rpos(inarr, i) != 1) {
-                    scnt_incr(inarr, i, 2);
+                if (sait_rpos(inarr, i) != 1) {
+                    sait_incr(inarr, i, 2);
                 } else {
-                    scnt_incr(inarr, i, 1);
+                    sait_incr(inarr, i, 1);
                 }
             } else {
                 /* Moves to the next character */
-                scnt_incr(inarr, i, 1);
+                sait_incr(inarr, i, 1);
             }
         } else { /* If outside quots */
             if (strchr(QUOT, c) != NULL) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Sets quot flag on c value */
                 quot = c;
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
             } else if (c == L_BRACKET) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Adds "(" to array */
-                _strarr_addn(&outarr, inarr, i, (scnt_asgn(tmp, i), scnt_incr(inarr, tmp, 1), tmp), 0, NULL);
+                _strarr_addn(&outarr, inarr, i, (sait_asgn(tmp, i), sait_incr(inarr, tmp, 1), tmp), 0, NULL);
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
             } else if (c == R_BRACKET) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Adds ")" to array */
-                _strarr_addn(&outarr, inarr, i, (scnt_asgn(tmp, i), scnt_incr(inarr, tmp, 1), tmp), 0, NULL);
+                _strarr_addn(&outarr, inarr, i, (sait_asgn(tmp, i), sait_incr(inarr, tmp, 1), tmp), 0, NULL);
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
             } else if (strchr(SPACES, c) != NULL) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
-            } else if (scnt_rpos(inarr, i) != 1 && c == scnt_cnext(inarr, i, 1) && strchr(DOUBLE, c) != NULL) {
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
+            } else if (sait_rpos(inarr, i) != 1 && c == sait_cnext(inarr, i, 1) && strchr(DOUBLE, c) != NULL) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Adds double key character to array */
-                _strarr_addn(&outarr, inarr, i, (scnt_asgn(tmp, i), scnt_incr(inarr, tmp, 2), tmp), 0, NULL);
+                _strarr_addn(&outarr, inarr, i, (sait_asgn(tmp, i), sait_incr(inarr, tmp, 2), tmp), 0, NULL);
                 /* Moves to the next word (moves to the next-next character and set begin marker on it) */
-                scnt_incr(inarr, i, 2);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 2);
+                sait_asgn(begin, i);
             } else if (strchr(UNARY, c) != NULL) {
                 /* Adds the previous word to array */
-                if (scnt_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
+                if (sait_cmp(begin, i)) _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
                 /* Adds unary key character to array */
-                _strarr_addn(&outarr, inarr, i, (scnt_asgn(tmp, i), scnt_incr(inarr, tmp, 1), tmp), 0, NULL);
+                _strarr_addn(&outarr, inarr, i, (sait_asgn(tmp, i), sait_incr(inarr, tmp, 1), tmp), 0, NULL);
                 /* Moves to the next word (moves to the next character and set begin marker on it) */
-                scnt_incr(inarr, i, 1);
-                scnt_asgn(begin, i);
+                sait_incr(inarr, i, 1);
+                sait_asgn(begin, i);
             } else if (c == SLASH) {
                 /* Moves to the next-next character */
-                if (scnt_rpos(inarr, i) != 1) {
-                    scnt_incr(inarr, i, 2);
+                if (sait_rpos(inarr, i) != 1) {
+                    sait_incr(inarr, i, 2);
                 } else {
-                    scnt_incr(inarr, i, 1);
+                    sait_incr(inarr, i, 1);
                 }
             } else if (c == COMMENT) {
                 /* Stops reading */
                 break;
             } else {
                 /* Moves to the next character */
-                scnt_incr(inarr, i, 1);
+                sait_incr(inarr, i, 1);
             }
         }
     }
     /* If there is one more word, then adds it to array */
-    if (scnt_cmp(begin, i)) {
+    if (sait_cmp(begin, i)) {
         _strarr_addn(&outarr, inarr, begin, i, 1, NULL);
     }
 

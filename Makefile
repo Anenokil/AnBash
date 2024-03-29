@@ -1,6 +1,6 @@
 CC = gcc -g -O0
 MAIN = main
-MODULS = colors strarr strarr_counter shelltree shellexec parse
+MODULS = colors strarr strarr_iter shelltree shellexec parse
 TARGET = r
 
 all: $(TARGET)
