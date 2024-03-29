@@ -1,8 +1,10 @@
+/* The module implements the string array type */
 #ifndef STRARR_H
 #define STRARR_H
 
-#define FRMT_W "%s "
-#define FRMT_L "%s\n"
+/* Output formats for string array */
+#define FRMT_W "%s " /* One element - one word */
+#define FRMT_L "%s\n" /* One element - one line*/
 
 typedef char **strarr; /* Array of strings */
 
