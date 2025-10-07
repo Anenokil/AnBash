@@ -1,0 +1,96 @@
+# Одна команда
+pwd
+pwd;
+pwd&
+(((pwd)))
+ls -l .. -a
+printf "%d > %d" 228 88
+
+# Несколько команд
+ ls;ps;pwd
+ ls;ps;pwd;
+(ls;ps;pwd)
+ ls&ps&pwd
+ ls&ps&pwd&
+ ls&ps;pwd
+ ls;ps&pwd
+
+# Конвеер
+ls|wc
+ls|wc|wc|wc
+ls|wc|wc|wc;pwd
+
+# Файлы
+pwd > 1.tst
+ls >> 1.tst
+cat <1.tst >2.tst
+<1.tst >3.tst cat
+
+# Переменные
+echo $HOME:$USER$EUID\\$SHELL-$ABC$ #<home>:<user><euid>\<shell>$
+
+# Экранирование
+touch a\bc
+touch a\ c
+touch a\\c
+touch a\#c
+
+# Строки
+echo "abc"
+echo 'abc'
+echo "a\bc"
+echo "a\\c"
+echo "a\"c"
+echo "a#c"
+echo ""
+echo "3   probela"
+echo \$HOME
+echo "$HOME"
+echo "\$HOME"
+echo "a\nb"
+echo -e "a\nb"
+echo "User \$$USER: super krutoy"
+
+# Приоритеты (без выполнения)
+ a|b && c|d & e|f && g|h
+(a|b && c|d & e|f && g|h)
+((a;b);c);d
+a;(b;(c;d))
+(a && (b | c); (d; e) || f) | g
+
+# Приоритеты (с выполнением)
+(ls;ps;pwd)|wc
+ ls |wc && pwd
+(ls)|wc && pwd
+ls -l <1.tst >> 4.tst|wc|| pwd&
+ls;(ls -l .. && pwd)|wc >> 4.tst& echo "a  d"
+ls > 5.tst | wc # wc = 0 0 0
+(ls > 6.tst; pwd > 7.tst) > 8.tst # В файл 8.tst ничего не запишется, но он будет создан
+(ls > 9.tst; pwd > 10.tst) | wc # wc = 0 0 0
+ ls >11.tst  | wc
+ >12.tst ls  | wc
+(ls >13.tst) | wc
+ ls | wc  >14.tst
+(ls | wc) >15.tst
+
+# cd
+cd ..
+cd
+
+# Ошибки выполнения
+qwertt # Неизвестная команда
+mkdir dir; pwd > dir # Попытка записи в папку
+rm -rf 0.tst; cat <0.tst # Файл 0.tst не существует
+
+# Ошибки синтаксиса
+(
+)
+()
+(;)
+(pwd
+pwd)
+pwd)(ps
+(pwd)(ls)
+;
+pwd;;
+pwd > ;
